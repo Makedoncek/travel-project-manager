@@ -124,11 +124,16 @@ Import `postman_collection.json` into Postman. Set the `username` and `password`
 ## Running Tests
 
 ```bash
+# Local
 python manage.py test trips
+
+# Docker
+docker compose exec web python manage.py test trips
 ```
 
 ## Tech Stack
 
 - Python 3.12+ / Django 6 / Django REST Framework 3.16
+- drf-spectacular for OpenAPI/Swagger documentation
 - SQLite (default, no setup needed)
 - Art Institute of Chicago API for place data and validation
