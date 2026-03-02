@@ -29,7 +29,11 @@ The API will be available at `http://localhost:8000/api/`.
 All endpoints require **HTTP Basic Authentication**. Create a user first:
 
 ```bash
+# Local
 python manage.py createsuperuser
+
+# Docker
+docker compose exec web python manage.py createsuperuser
 ```
 
 Then pass credentials with every request:
@@ -112,6 +116,16 @@ curl -u username:password -X PATCH http://localhost:8000/api/projects/1/places/1
 - The same artwork cannot be added to a project twice
 - A project **cannot be deleted** if any of its places are marked as visited
 - When **all places** in a project are marked as visited, the project status automatically changes to `completed`
+
+## Postman Collection
+
+Import `postman_collection.json` into Postman. Set the `username` and `password` variables to your superuser credentials. All endpoints are pre-configured with Basic Auth and example request bodies.
+
+## Running Tests
+
+```bash
+python manage.py test trips
+```
 
 ## Tech Stack
 

@@ -1,0 +1,250 @@
+{
+	"info": {
+		"name": "Travel Project Manager API",
+		"description": "Complete Postman collection for the Travel Project Manager API.\n\nSetup:\n1. Start the server: `python manage.py runserver`\n2. Create a user: `python manage.py createsuperuser`\n3. Set the `username` and `password` variables in this collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{ "key": "username", "value": "{{username}}", "type": "string" },
+			{ "key": "password", "value": "{{password}}", "type": "string" }
+		]
+	},
+	"variable": [
+		{ "key": "baseUrl", "value": "http://localhost:8000/api" },
+		{ "key": "username", "value": "admin" },
+		{ "key": "password", "value": "admin" },
+		{ "key": "projectId", "value": "1" },
+		{ "key": "placeId", "value": "1" }
+	],
+	"item": [
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "List all projects",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/projects/"
+					}
+				},
+				{
+					"name": "List projects (filter by status)",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/projects/?status=active",
+							"host": ["{{baseUrl}}"],
+							"path": ["projects", ""],
+							"query": [
+								{ "key": "status", "value": "active" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Create project (no places)",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/projects/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Chicago Art Tour\",\n  \"description\": \"Visit famous artworks\",\n  \"start_date\": \"2026-06-01\"\n}"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"pm.collectionVariables.set('projectId', json.id);"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Create project with initial places",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/projects/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Museum Run\",\n  \"initial_places\": [\n    {\"external_id\": 27992},\n    {\"external_id\": 129884}\n  ]\n}"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"pm.collectionVariables.set('projectId', json.id);",
+									"if (json.places && json.places.length > 0) {",
+									"  pm.collectionVariables.set('placeId', json.places[0].id);",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get single project",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/projects/{{projectId}}/"
+					}
+				},
+				{
+					"name": "Update project",
+					"request": {
+						"method": "PATCH",
+						"url": "{{baseUrl}}/projects/{{projectId}}/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Updated description\",\n  \"start_date\": \"2026-07-15\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete project",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/projects/{{projectId}}/"
+					}
+				},
+				{
+					"name": "Delete project (should fail — visited place)",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/projects/{{projectId}}/"
+					}
+				}
+			]
+		},
+		{
+			"name": "Places",
+			"item": [
+				{
+					"name": "List places for project",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/projects/{{projectId}}/places/"
+					}
+				},
+				{
+					"name": "Add place to project",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/projects/{{projectId}}/places/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"external_id\": 28560\n}"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"pm.collectionVariables.set('placeId', json.id);"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Add place (should fail — duplicate)",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/projects/{{projectId}}/places/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"external_id\": 28560\n}"
+						}
+					}
+				},
+				{
+					"name": "Add place (should fail — invalid ID)",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/projects/{{projectId}}/places/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"external_id\": 99999999\n}"
+						}
+					}
+				},
+				{
+					"name": "Get single place",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/projects/{{projectId}}/places/{{placeId}}/"
+					}
+				},
+				{
+					"name": "Update notes",
+					"request": {
+						"method": "PATCH",
+						"url": "{{baseUrl}}/projects/{{projectId}}/places/{{placeId}}/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notes\": \"Amazing painting! Must see in person.\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Mark place as visited",
+					"request": {
+						"method": "PATCH",
+						"url": "{{baseUrl}}/projects/{{projectId}}/places/{{placeId}}/",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"visited\": true\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Unauthenticated request (should return 401)",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"url": "{{baseUrl}}/projects/"
+					}
+				}
+			]
+		}
+	]
+}
