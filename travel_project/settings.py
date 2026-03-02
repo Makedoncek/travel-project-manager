@@ -138,15 +138,6 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API for managing travel projects and places from the Art Institute of Chicago.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'SECURITY': [{'basicAuth': []}],
-    'COMPONENTS': {
-        'securitySchemes': {
-            'basicAuth': {
-                'type': 'http',
-                'scheme': 'basic',
-            }
-        }
-    },
 }
 
 CACHES = {
