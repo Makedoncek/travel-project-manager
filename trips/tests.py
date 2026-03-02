@@ -1,6 +1,7 @@
 from unittest.mock import patch, MagicMock
 
 from django.test import TestCase
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -140,6 +141,36 @@ class ProjectModelTest(TestCase):
 
 
 # ---------------------------------------------------------------------------
+# Authentication tests
+# ---------------------------------------------------------------------------
+
+class AuthenticationTest(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+
+    def test_unauthenticated_request_is_rejected(self):
+        r = self.client.get('/api/projects/')
+        self.assertEqual(r.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_request_is_allowed(self):
+        self.client.force_authenticate(user=self.user)
+        r = self.client.get('/api/projects/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_basic_auth_credentials_accepted(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Basic dGVzdHVzZXI6dGVzdHBhc3M=')
+        r = self.client.get('/api/projects/')
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+
+    def test_wrong_credentials_rejected(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Basic d3Jvbmc6d3Jvbmc=')
+        r = self.client.get('/api/projects/')
+        self.assertEqual(r.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+# ---------------------------------------------------------------------------
 # Project API tests
 # ---------------------------------------------------------------------------
 
@@ -147,6 +178,8 @@ class ProjectListCreateAPITest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(user=self.user)
         cache.clear()
 
     def test_list_empty(self):
@@ -236,6 +269,8 @@ class ProjectDetailAPITest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(user=self.user)
         self.project = make_project(name='My Trip')
 
     def test_retrieve(self):
@@ -275,6 +310,8 @@ class PlacesAPITest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(user=self.user)
         self.project = make_project()
         cache.clear()
 

@@ -125,6 +125,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -132,6 +138,15 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API for managing travel projects and places from the Art Institute of Chicago.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'SECURITY': [{'basicAuth': []}],
+    'COMPONENTS': {
+        'securitySchemes': {
+            'basicAuth': {
+                'type': 'http',
+                'scheme': 'basic',
+            }
+        }
+    },
 }
 
 CACHES = {

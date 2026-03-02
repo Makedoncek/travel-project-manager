@@ -24,6 +24,22 @@ docker compose up --build
 
 The API will be available at `http://localhost:8000/api/`.
 
+## Authentication
+
+All endpoints require **HTTP Basic Authentication**. Create a user first:
+
+```bash
+python manage.py createsuperuser
+```
+
+Then pass credentials with every request:
+
+```bash
+curl -u username:password http://localhost:8000/api/projects/
+```
+
+Or use the **Authorize** button in the Swagger UI.
+
 ## API Documentation
 
 Interactive API docs are available once the server is running:
@@ -60,7 +76,7 @@ Interactive API docs are available once the server is running:
 ### Create a project with places
 
 ```bash
-curl -X POST http://localhost:8000/api/projects/ \
+curl -u username:password -X POST http://localhost:8000/api/projects/ \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Chicago Art Tour",
@@ -76,7 +92,7 @@ curl -X POST http://localhost:8000/api/projects/ \
 ### Add a place to an existing project
 
 ```bash
-curl -X POST http://localhost:8000/api/projects/1/places/ \
+curl -u username:password -X POST http://localhost:8000/api/projects/1/places/ \
   -H "Content-Type: application/json" \
   -d '{"external_id": 28560}'
 ```
@@ -84,7 +100,7 @@ curl -X POST http://localhost:8000/api/projects/1/places/ \
 ### Update notes and mark as visited
 
 ```bash
-curl -X PATCH http://localhost:8000/api/projects/1/places/1/ \
+curl -u username:password -X PATCH http://localhost:8000/api/projects/1/places/1/ \
   -H "Content-Type: application/json" \
   -d '{"notes": "Amazing painting!", "visited": true}'
 ```
