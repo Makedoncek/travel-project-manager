@@ -16,6 +16,11 @@ class ProjectPlaceCreateSerializer(serializers.Serializer):
     external_id = serializers.IntegerField()
 
 
+class ProjectPlaceAddSerializer(serializers.Serializer):
+    """Used when adding a single place to an existing project."""
+    external_id = serializers.IntegerField(help_text='Art Institute of Chicago artwork ID.')
+
+
 class ProjectPlaceUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectPlace

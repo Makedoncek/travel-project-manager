@@ -24,6 +24,14 @@ docker compose up --build
 
 The API will be available at `http://localhost:8000/api/`.
 
+## API Documentation
+
+Interactive API docs are available once the server is running:
+
+- **Swagger UI:** [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
+- **ReDoc:** [http://localhost:8000/api/redoc/](http://localhost:8000/api/redoc/)
+- **OpenAPI schema (JSON):** [http://localhost:8000/api/schema/](http://localhost:8000/api/schema/)
+
 ## API Endpoints
 
 ### Projects
